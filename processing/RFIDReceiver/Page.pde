@@ -2,13 +2,11 @@ import processing.net.*;
 
 class Page {
     
-    PApplet app;
     int numOfPages;
     int currentPage;
     
-    Page(PApplet _app, int _numOfPages){
+    Page(int _numOfPages){
         
-        app= _app;
         numOfPages= _numOfPages;
         currentPage= -1;
     }
@@ -20,7 +18,6 @@ class Page {
     void refresh(int numOfTags0, int numOfTags1){
         
         int page= -1;
-//        Client client;
 
         if(numOfTags0+numOfTags1==numOfPages){
             page= numOfTags0;
@@ -28,10 +25,8 @@ class Page {
         
         if(currentPage!=page){
             currentPage= page;
-        
-//            client= new Client(app, "localhost", 8080);
-//            client.write("GET /?page="+currentPage+" HTTP1.1\r\n");
-//            client.write("Host: localhost\r\n\r\n");
+            
+            loadStrings("http://localhost:8080/?page="+currentPage);
         }
     }
 }

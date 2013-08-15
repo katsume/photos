@@ -2,7 +2,7 @@ import java.util.List;
 
 class Reader {
     
-    int REFRESH_PERIOD= 500;
+    int REFRESH_PERIOD= 200;
     
     ArrayList<String> tags;
     int currentIndex;
@@ -37,6 +37,8 @@ class Reader {
             currentIndex++;
             lastMillis= millis();
         }
+        
+        currentIndex= min(currentIndex, 3);
         
     }
 }
