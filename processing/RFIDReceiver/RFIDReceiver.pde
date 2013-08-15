@@ -1,33 +1,43 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import processing.serial.*;
 
-String[] SERIAL_NAMES= {
+String[] SERIAL_PORTS= {
     "/dev/tty.usbmodem1411",
     "/dev/tty.usbmodem1421"
 };
+
+String[] TAG_IDS= {
+    "2B1AB1B1",
+    "3B9AAAB1",
+    "5BF3ABB1",
+    "6B0FA9B1"
+};
+
 int FRAME_RATE= 60;
 int REFRESH_COUNT= 10;
-int FONT_SIZE= 10;
+int FONT_SIZE= 20;
 
-Serial[] serials= new Serial[SERIAL_NAMES.length];
-ArrayList<ArrayList<Tag>> tags= new ArrayList<ArrayList<Tag>>();
+ArrayList<Serial> serials= new ArrayList<Serial>();
+ArrayList<Reader> readers= new ArrayList<Reader>();
 Counter refreshCounter= new Counter(REFRESH_COUNT);
-Page page= new Page(this);
+Page page= new Page(this, TAG_IDS.length);
 
 void setup(){
     
     frameRate(FRAME_RATE);
     size(320, 240);
-
-    for(int i=0; i<serials.length; i++){
-        
-        Serial serial= new Serial(this, SERIAL_NAMES[i], 115200);
+    
+    for(int i=0; i<SERIAL_PORTS.length; i++){
+        String port= SERIAL_PORTS[i];
+        Serial serial= new Serial(this, port, 115200);
         serial.bufferUntil('\n');
-        serials[i]= serial;
-        
-        tags.add(new ArrayList<Tag>());
+        serials.add(serial);
     }
+    
+    readers.add(new Reader(TAG_IDS));
+    readers.add(new Reader(reverse(TAG_IDS)));
 
     textSize(FONT_SIZE);
 }
@@ -37,63 +47,46 @@ void draw(){
     background(0);
     
     if(refreshCounter.update()){
+        
+        Iterator it= readers.iterator();
+        Reader reader;
 
-        refreshTags();
+        while(it.hasNext()){
+            
+            reader= (Reader)it.next();
+            reader.refresh();
+        }
 
-        page.refresh(tags.get(0).size(), tags.get(1).size());
+        page.refresh(readers.get(0).getCurrentTags().size(), readers.get(1).getCurrentTags().size());
     }
     
-    //
+    //    Debug view
     
     text(page.get(), 0, FONT_SIZE);
 
-    for(int i=0; i<tags.size(); i++){
-        for(int j=0; j<tags.get(i).size(); j++){
-            text(tags.get(i).get(j).id(), i*(width/2), FONT_SIZE*(j+2));
+    for(int i=0; i<readers.size(); i++){
+        
+        List<String> currentTags= readers.get(i).getCurrentTags();
+        int size= currentTags.size();  
+        int x= i*(width/2);
+        
+        text(size, x, FONT_SIZE*5);
+        
+        for(int j=0; j<size; j++){
+            int index= (i==0) ? j : size-1-j;
+            text(currentTags.get(index), x, FONT_SIZE*(6+j));
         }
-    }
-
+    }    
 }
 
 void serialEvent(Serial serial){
-    
+
     String id= serial.readStringUntil('\n');
     id= trim(id);
 
-    int index= Arrays.asList(serials).indexOf(serial);
-    boolean unique= true;
-    Iterator it= tags.get(index).iterator();
+    int index= serials.indexOf(serial);
+    readers.get(index).push(id);
 
-    while(it.hasNext()){
-
-        Tag tag= (Tag)it.next();
-        if(tag.id().equals(id)){
-
-            tag.extend();
-            unique= false;
-            break;
-        }
-    }
-
-    if(unique && id.length()>1){
-        tags.get(index).add(new Tag(id));
-    }
-    
     serial.write(' ');
-}
-
-void refreshTags(){
-    
-    for(int i=0; i<tags.size(); i++){
-        
-        Iterator it= tags.get(i).iterator();
-        while(it.hasNext()){
-            
-            Tag tag= (Tag)it.next();
-            if(tag.expired()){
-                it.remove();
-            }
-        }
-    }
 }
 

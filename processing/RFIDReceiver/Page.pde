@@ -3,12 +3,14 @@ import processing.net.*;
 class Page {
     
     PApplet app;
+    int numOfPages;
     int currentPage;
     
-    Page(PApplet _app){
+    Page(PApplet _app, int _numOfPages){
         
         app= _app;
-        currentPage= 0;
+        numOfPages= _numOfPages;
+        currentPage= -1;
     }
     
     int get(){
@@ -17,19 +19,11 @@ class Page {
     
     void refresh(int numOfTags0, int numOfTags1){
         
-        int page= 2;
-        Client client;
-        
-        if(numOfTags0==0){
-            page= 0;
-        } else if(numOfTags0==1){
-            page= 1;
-        }
-    
-        if(numOfTags1==0){
-            page= 4;
-        } else if(numOfTags1==1){
-            page= 3;
+        int page= -1;
+//        Client client;
+
+        if(numOfTags0+numOfTags1==numOfPages){
+            page= numOfTags0;
         }
         
         if(currentPage!=page){
@@ -41,3 +35,4 @@ class Page {
         }
     }
 }
+
