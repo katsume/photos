@@ -4,8 +4,8 @@ import java.util.Iterator;
 import processing.serial.*;
 
 String[] SERIAL_PORTS= {
-    "/dev/tty.usbmodem1411",
-    "/dev/tty.usbmodem1421"
+    "/dev/tty.usbmodem1421",
+    "/dev/tty.usbmodem1411"
 };
 
 String[] TAG_IDS= {
@@ -22,7 +22,7 @@ int FONT_SIZE= 20;
 ArrayList<Serial> serials= new ArrayList<Serial>();
 ArrayList<Reader> readers= new ArrayList<Reader>();
 Counter refreshCounter= new Counter(REFRESH_COUNT);
-Page page= new Page(this, TAG_IDS.length);
+Page page= new Page(TAG_IDS.length);
 
 void setup(){
     
