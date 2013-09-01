@@ -4,16 +4,14 @@ module.exports = function(grunt) {
 		sass: {
 			dist: {
 				files: {
-					"./client/shared/css/index.css": "./client/shared/scss/index.scss",
-					"./viewer/shared/css/index.css": "./viewer/shared/scss/index.scss"
+					"./src/shared/css/index.css": "./src/shared/scss/index.scss"
 				}
 			}
 		},
 		watch: {
 			css: {
 				files: [
-					"./client/shared/scss/*.scss",
-					"./viewer/shared/scss/*.scss"
+					"./src/shared/scss/*.scss"
 				],
 				tasks: ["sass"]
 			}
@@ -21,31 +19,10 @@ module.exports = function(grunt) {
 		requirejs: {
 			client: {
 				options: {
-					appDir: "./client",
+					appDir: "./src",
 					baseUrl: "shared/js",
-					mainConfigFile: "./client/shared/js/index.js",
-					dir: "./dist/client",
-//					optimize: "none",
-					optimizeCss: "standard",
-					findNestedDependencies: true,
-					removeCombined: true,
-					modules: [
-						{
-							name: "index",
-							exclude: [
-								"socket.io"
-							]
-						}
-					],
-					fileExclusionRegExp: /^ﾂ･.|scss/
-				}
-			},
-			viewer: {
-				options: {
-					appDir: "./viewer",
-					baseUrl: "shared/js",
-					mainConfigFile: "./viewer/shared/js/index.js",
-					dir: "./dist/viewer",
+					mainConfigFile: "./src/shared/js/index.js",
+					dir: "./dist",
 //					optimize: "none",
 					optimizeCss: "standard",
 					findNestedDependencies: true,
@@ -64,21 +41,15 @@ module.exports = function(grunt) {
 		},
 		rsync: {
 			options: {
-				host: "133.242.150.215",
+				host: "219.94.250.49",
 				recursive: true,
 				syncDest: true,
 				exclude: [".svn", ".DS_Store", "build.txt"]
 			},
 			client: {
 				options: {
-					src: "./dist/client",
-					dest: "/var/www/htdocs/pprc"
-				}
-			},
-			viewer: {
-				options: {
-					src: "./dist/viewer",
-					dest: "/var/www/htdocs/pprc"
+					src: "./dist/",
+					dest: "/var/www/p.katsu.me/htdocs"
 				}
 			}
 		}
@@ -95,14 +66,9 @@ module.exports = function(grunt) {
 		"watch"
 	]);
 
-	grunt.registerTask("client", [
+	grunt.registerTask("deploy", [
 		"requirejs:client",
 		"rsync:client"
-	]);
-
-	grunt.registerTask("viewer", [
-		"requirejs:viewer",
-		"rsync:viewer"
 	]);
 };
 

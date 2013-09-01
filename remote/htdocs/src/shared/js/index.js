@@ -24,7 +24,7 @@ require.config({
 		}
 	},
 	paths: {
-		'socket.io': '//133.242.150.215:8080/socket.io/socket.io',
+		'socket.io': '//219.94.250.49:8080/socket.io/socket.io',
 		'binaryajax': 'libs/binaryajax',
 		'exif': 'libs/exif',
 		'canvasResize': 'libs/canvasResize',
@@ -35,7 +35,7 @@ require.config({
 	},
 	config: {
 		'models/socket': {
-			host: '133.242.150.215:8080'
+			host: '219.94.250.49:8080'
 		},
 		'models/resize': {
 			width: 640,
