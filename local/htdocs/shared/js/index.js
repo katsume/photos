@@ -16,7 +16,7 @@ require.config({
 		}
 	},
 	paths: {
-		'socket.io': '//133.242.150.215:8080/socket.io/socket.io',
+		'socket.io': '//219.94.250.49:8080/socket.io/socket.io',
 		'jquery': 'libs/jquery-2.0.0.min',
 		'jquery.waitAnimation': 'libs/jquery.waitAnimation',
 		'underscore': 'libs/underscore-min',
