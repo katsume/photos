@@ -40,7 +40,6 @@ require([
 		});
 	
 		require([
-			'models/socket',
 			'views/viewport',
 			'views/images'
 		], function(){

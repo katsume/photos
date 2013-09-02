@@ -1,7 +1,9 @@
 define({
-	socket: {
-		host: '219.94.250.49',
-		port: 8080
+	host: '219.94.250.49',
+	port: 8080,
+	imageSize: {
+		width: 150,
+		height: 150
 	},
 /*
 	left: 6,
@@ -13,22 +15,16 @@ define({
 				{
 					left: 100,
 					top: 200,
-					width: 150,
-					height: 150,
 					rotate: 0
 				},
 				{
 					left: 300,
 					top: 200,
-					width: 150,
-					height: 150,
 					rotate: 90
 				},
 				{
 					left: 500,
 					top: 200,
-					width: 150,
-					height: 150,
 					rotate: 0
 				}
 			],

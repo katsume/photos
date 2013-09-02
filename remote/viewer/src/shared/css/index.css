@@ -56,13 +56,15 @@ body.debug {
 	display: block;
 			
 	position: absolute;
+	left: 0;
+	top: 0;
 	
 	width: 1px;
 	height: 1px;
 	
 	overflow: visible;
 
-	-webkit-transition-property: left, top, -webkit-transform;
+	-webkit-transition-property: -webkit-transform;
 	-webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);	
 	
 }

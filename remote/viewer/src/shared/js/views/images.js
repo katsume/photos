@@ -9,7 +9,7 @@ define([
 	Backbone,
 	Image,
 	collection,
-	ImageView){
+	View){
 	
 	return new (Backbone.View.extend({
 		el: $('#images'),
@@ -17,18 +17,29 @@ define([
 		},
 		initialize: function(){
 		
-			this.listenTo(collection, 'add', this.appendImage);
+			this.listenTo(collection, 'add', this.append);
+			this.listenTo(collection, 'reset', this.replace);
 
 			_.bindAll(this, 'keydownHandler');
 			$(document).keydown(this.keydownHandler);
 		},
-		appendImage: function(image){
+		append: function(model, collection, options){
 		
-			var imageView= new ImageView({
-				model: image
+			var view= new View({
+				model: model
 			});
 			
-			$(this.el).append(imageView.render().el);
+			$(this.el).append(view.render().el);
+		},
+		replace: function(collection){
+			
+			this.$el.empty();
+			
+			_.each(collection.models, function(model, i){
+				setTimeout(function(that){
+					that.append(model, collection);
+				}, 33*i, this)
+			}, this);
 		},
 		keydownHandler: function(event){
 			
