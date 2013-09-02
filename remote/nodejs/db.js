@@ -93,6 +93,11 @@ exports.update= function(data, callback){
 
 exports.destroy= function(req, res){
 
+	if(req.body.code!=='1234'){
+		res.send(400);
+		return;
+	}
+
 	Image.remove({}, function(err){
 		if(err){
 			res.send(500);

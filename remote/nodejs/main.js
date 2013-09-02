@@ -8,7 +8,7 @@ var express= require('express'),
 	app= express();
 
 app.configure(function(){
-/* 	app.use(express.bodyParser()); */
+	app.use(express.bodyParser());
 	app.use(function(req, res, next){
 		res.header('Access-Control-Allow-Origin', "*");
 		next();
@@ -21,7 +21,7 @@ app.get('/', function(req, res){
 
 app.get('/images', db.index);
 
-app.get('/destroy', db.destroy);
+app.post('/destroy', db.destroy);
 
 app.get('*', function(req, res){
 	res.send(404);
