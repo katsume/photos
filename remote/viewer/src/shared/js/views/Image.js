@@ -27,21 +27,24 @@ define([
 				.css({
 					'background-image': 'url('+path+')'
 				});
-			
+				
 			this.$el.append($el);
 			
 			if(model.has('heading')){
-				this.changeHeadingHandler(model);
+				this.changeHeadingHandler(model, model.get('heading'));
 			}
 			
 			return this;
 		},
-		changeHeadingHandler: function(model){
-			
+		changeHeadingHandler: function(model, heading, options){
+
 			var place= _(config.places).shuffle().pop();
 			
+			if(options && options.isNew){
+			}
+			
 			this.initializeSize(model, place);
-			this.initializePosition(model, place);
+			this.initializePosition(model, heading, place);
 			
 			setTimeout(function(that){
 
@@ -74,7 +77,7 @@ define([
 					marginTop: -height/2+'px'
 				});
 		},
-		initializePosition: function(model, place){
+		initializePosition: function(model, heading, place){
 
 			var imageSize= config.imageSize,
 				viewportWidth= viewport.get('width'),
@@ -85,16 +88,13 @@ define([
 				x,
 				y,
 				rotate;
-			
-			degree= (function(src, context){
-				var dst= src;
-				dst-= context.DEG_ADJUST;
-				dst-= Math.floor(dst/360.0)*360.0;
-				if(180<dst){
-					dst-= 360;
-				}
-				return dst;
-			})(model.get('heading'), this);
+
+			degree= heading;
+			degree-= this.DEG_ADJUST;
+			degree-= Math.floor(degree/360.0)*360.0;
+			if(180<degree){
+				degree-= 360;
+			}			
 
 			radian= (degree/180.0)*Math.PI;
 
@@ -105,12 +105,12 @@ define([
 				return getRadius(viewportWidth, viewportHeight)+getRadius(imageSize.width, imageSize.height);
 			})();
 			
-/*
 			x= viewportWidth/2+radius*Math.cos(radian);
-			y= viewportHeight/2+radius*Math.sin(radian);			
-*/
+			y= viewportHeight/2+radius*Math.sin(radian);
+/*
 			x= place.left+radius*Math.cos(radian);
 			y= place.top+radius*Math.sin(radian);			
+*/
 			
 			//	[-360, 0, 360]+(-180...+180)
 			rotate= (_.random(2)*360-1*360)+(Math.random()*360-180);

@@ -11,12 +11,13 @@ define([
 
 	return new (Backbone.Collection.extend({
 		model: Image,
-		offset: 0,
 		limit: 100,
 		url: function(){
 			return '//'+config.host+':'+config.port+'/images?offset='+this.offset+'&limit='+this.limit;
 		},
 		initialize: function(){
+		
+			this.offset= 0;
 
 			_.bindAll(this, 'socketPostHandler', 'socketTriggerHandler');
 			this.socket= io.connect(config.host+':'+config.port+'/viewer');
@@ -48,6 +49,7 @@ define([
 			console.log('connect_failed');
 		},
 		socketPostHandler: function(data){
+
 			var model= new Image();
 		
 			model.set(data);
@@ -55,10 +57,16 @@ define([
 			this.add(model);
 		},
 		socketTriggerHandler: function(data){
+
 			var model= this.get(data.id);
-			model.set(data);			
+
+			model.set(data, {
+				isNew: true
+			});
 		},
-		socketRecconectHandler: function(){},
+		socketRecconectHandler: function(){
+			console.log('reconnect');
+		},
 		socketDisconnectHandler: function(){
 			console.log('disconnect');
 		}
