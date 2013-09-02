@@ -1,6 +1,7 @@
 {
 	"devDependencies": {
-		"socket.io": "*",
-		"puid": "*"
+		"express": "*",
+		"mongoose": "*",
+		"socket.io": "*"
 	}
 }
