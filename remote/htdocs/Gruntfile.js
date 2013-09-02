@@ -43,8 +43,9 @@ module.exports = function(grunt) {
 			options: {
 				host: "219.94.250.49",
 				recursive: true,
-				syncDest: true,
-				exclude: [".svn", ".DS_Store", "build.txt"]
+				syncDest: false,
+				syncDestIgnoreExcl: true,
+				exclude: [".svn", ".DS_Store", "build.txt", "post_images", "viewer"]
 			},
 			client: {
 				options: {
