@@ -9,7 +9,7 @@ define([
 	image,
 	devicesensor){
 	
-	var _socket= io.connect(module.config().host+'/client');
+	var _socket= io.connect(module.config().host+'/app');
 	
 	_socket
 		.on('connecting', function(){
