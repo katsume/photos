@@ -1,17 +1,4 @@
-var PATH= '../htdocs/post_images/';
-
-var fs= require('fs'),
-	db= require('./db');
-
-var parseDataURL= function(string){
-	if(/^data:.+\/(.+);base64,(.*)$/.test(string)){
-		return {
-			ext: RegExp.$1,
-			data: new Buffer(RegExp.$2, 'base64')
-		};
-	}
-	return;
-};
+var db= require('./db');
 
 /*
  *	express
@@ -20,11 +7,13 @@ var parseDataURL= function(string){
 var express= require('express'),
 	app= express();
 
-/*
 app.configure(function(){
-	app.use(express.bodyParser());
+/* 	app.use(express.bodyParser()); */
+	app.use(function(req, res, next){
+		res.header('Access-Control-Allow-Origin', "*");
+		next();
+	});
 });
-*/
 
 app.get('/', function(req, res){
 	res.send(200);
@@ -61,22 +50,23 @@ var client= io
 	
 		socket.on("post", function(data, callback){
 		
-			var id= db.create({
-				width: data.width,
-				height: data.height
+			db.create(data, function(err, id, name){
+			
+				if(err){
+					callback();
+					return;
+				}
+				
+				viewer.emit("post", {
+					id: id,
+					name: name,
+					width: data.width,
+					height: data.height
+				});
+
+				callback(id);
 			});
 			
-			data.id= id;
-			viewer.emit("post", data);
-
-			callback(id);
-			
-			var parsedData= parseDataURL(data.data);
-
-			fs.writeFile(PATH+id+'.'+parsedData.ext, parsedData.data,
-				function(err){
-				}
-			);
 		});
 		
 		socket.on("trigger", function(data){
