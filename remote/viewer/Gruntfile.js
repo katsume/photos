@@ -1,23 +1,8 @@
 module.exports = function(grunt) {
 
 	grunt.initConfig({
-		sass: {
-			dist: {
-				files: {
-					"./src/shared/css/index.css": "./src/shared/scss/index.scss"
-				}
-			}
-		},
-		watch: {
-			css: {
-				files: [
-					"./src/shared/scss/*.scss"
-				],
-				tasks: ["sass"]
-			}
-		},
 		requirejs: {
-			client: {
+			viewer: {
 				options: {
 					appDir: "./src",
 					baseUrl: "shared/js",
@@ -45,12 +30,12 @@ module.exports = function(grunt) {
 				recursive: true,
 				syncDest: false,
 				syncDestIgnoreExcl: true,
-				exclude: [".svn", ".DS_Store", "build.txt", "post_images", "viewer"]
+				exclude: [".svn", ".DS_Store", "build.txt", "post_images"]
 			},
-			client: {
+			viewer: {
 				options: {
 					src: "./dist/",
-					dest: "/var/www/p.katsu.me/htdocs"
+					dest: "/var/www/p.katsu.me/htdocs/viewer"
 				}
 			}
 		}
@@ -63,13 +48,9 @@ module.exports = function(grunt) {
 		}
 	}
 
-	grunt.registerTask("default", [
-		"watch"
-	]);
-
 	grunt.registerTask("deploy", [
-		"requirejs:client",
-		"rsync:client"
+		"requirejs",
+		"rsync"
 	]);
 };
 
