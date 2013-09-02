@@ -70,7 +70,14 @@ var client= io
 		});
 		
 		socket.on("trigger", function(data){
-			viewer.emit("trigger", data);
+		
+			db.update(data, function(err){
+				
+				if(err){
+				}
+				
+				viewer.emit("trigger", data);
+			});
 		});
 	});
 

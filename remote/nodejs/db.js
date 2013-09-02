@@ -9,7 +9,8 @@ var DB_HOST= 'localhost',
 var ImageSchema= new mongoose.Schema({
 	width: Number,
 	height: Number,
-	name: String
+	name: String,
+	heading: Number
 });
 
 mongoose.model('Image', ImageSchema);
@@ -78,6 +79,16 @@ exports.create= function(data, callback){
 			callback(null, image._id, image.name);
 		});
 	});
+};
+
+exports.update= function(data, callback){
+	
+	var image= Image.findByIdAndUpdate(data.id, {
+		heading: data.heading
+	}, function(err){
+		callback(err);
+	});
+	
 };
 
 exports.destroy= function(req, res){
