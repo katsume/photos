@@ -45,7 +45,7 @@ io.enable('browser client gzip');
 io.set('log level', 1);
 
 var client= io
-	.of("/client")
+	.of("/app")
 	.on("connection", function(socket){
 	
 		socket.on("post", function(data, callback){
