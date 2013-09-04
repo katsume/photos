@@ -40,29 +40,19 @@ define([
 		},
 		socketConnectHandler: function(){
 			console.log('connect');
-	
-			if(typeof callback==='function'){
-				callback();
-			}
 		},
 		socketConnectFailedHandler: function(){
 			console.log('connect_failed');
 		},
 		socketPostHandler: function(data){
-
-			var model= new Image();
-		
-			model.set(data);
-		
+			var model= new Image(data);		
 			this.add(model);
 		},
 		socketTriggerHandler: function(data){
-
+		console.log(data.heading);
 			var model= this.get(data.id);
-
-			model.set(data, {
-				isNew: true
-			});
+			model.set(data);
+			model.trigger('trigger');
 		},
 		socketRecconectHandler: function(){
 			console.log('reconnect');

@@ -4,7 +4,7 @@ require.config({
 		'socket.io': {
 			exports: 'io'
 		},
-		'jquery.waitAnimation': {
+		'jquery-waitAnimation': {
 			deps: ['jquery']
 		},
 		'underscore': {
@@ -18,15 +18,14 @@ require.config({
 	paths: {
 		'socket.io': '//219.94.250.49:8080/socket.io/socket.io',
 		'jquery': 'libs/jquery-2.0.0.min',
-		'jquery.waitAnimation': 'libs/jquery.waitAnimation',
+		'jquery-waitAnimation': 'libs/jquery-waitAnimation',
 		'underscore': 'libs/underscore-min',
 		'backbone': 'libs/backbone-min'
 	}
 });
 
 require([
-	'jquery',
-	'jquery.waitAnimation'
+	'jquery'
 ], function(
 	$){
 
@@ -40,7 +39,8 @@ require([
 		});
 	
 		require([
-			'views/viewport',
+			'views/table',
+			'views/album',
 			'views/images'
 		], function(){
 			

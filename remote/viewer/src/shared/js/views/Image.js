@@ -1,22 +1,28 @@
 define([
 	'config',
 	'backbone',
-	'models/viewport'
+	'models/table',
+	'models/imagePosition',
+	'jquery-waitAnimation'
 ], function(
 	config,
 	Backbone,
-	viewport){
+	table,
+	imagePosition){
 	
 	return Backbone.View.extend({
 		DEG_ADJUST: 0,
 		tagName: 'li',
 		className: 'image',
 		initialize: function(){
-			this.listenTo(this.model, 'change:heading', this.changeHeadingHandler);
+		
+			this.place= null;
+		
+			this.listenTo(this.model, 'trigger', this.trigger);
 			this.listenTo(this.model, 'remove', this.remove);
 		},
 		render: function(){
-		
+
 			var model= this.model,
 				path= '//'+config.host+model.get('name');
 			
@@ -31,35 +37,33 @@ define([
 			this.$el.append($el);
 			
 			if(model.has('heading')){
-				this.changeHeadingHandler(model, model.get('heading'));
+				this.trigger(true);
 			}
 			
 			return this;
 		},
-		changeHeadingHandler: function(model, heading, options){
-
-			var place= _(config.places).shuffle().pop();
-			
-			if(options && options.isNew){
-			}
-			
-			this.initializeSize(model, place);
-			this.initializePosition(model, heading, place);
-			
-			setTimeout(function(that){
-
-				that.$el
-					.css({
-						webkitTransform: 'translate3d('+place.left+'px, '+place.top+'px, 0) rotate(0deg)',
-						webkitTransitionDuration: '1.5s'
-					});
-
-			}, 100, this);
-			
-		},
-		initializeSize: function(model){
+		trigger: function(isRandom){
 		
-			var size= config.imageSize;
+			this.setTargetPosition(isRandom);
+			this.adjustSize();
+			this.setInitialPosition();
+			this.show();
+		},
+		setTargetPosition: function(isRandom){
+		
+			this.place= imagePosition.random();
+			
+			if(isRandom){
+				this.place.rotate= Math.random()*360-180;
+			} else {
+				this.place.rotate= 0;
+			}
+		},
+		adjustSize: function(){
+		
+			var model= this.model,
+				size= config.image.size,
+				borderWidth= config.image.borderWidth;
 			
 			var rx= size.width/model.get('width'),
 				ry= size.height/model.get('height');
@@ -74,14 +78,19 @@ define([
 					width: width+'px',
 					height: height+'px',
 					marginLeft: -width/2+'px',
-					marginTop: -height/2+'px'
+					marginTop: -height/2+'px',
+					borderWidth: borderWidth+'px'
 				});
 		},
-		initializePosition: function(model, heading, place){
+		setInitialPosition: function(){
 
-			var imageSize= config.imageSize,
-				viewportWidth= viewport.get('width'),
-				viewportHeight= viewport.get('height'),
+			var model= this.model,
+				heading= model.get('heading'),
+				place= this.place;
+
+			var	size= config.image.size,
+				tableWidth= table.get('width'),
+				tableHeight= table.get('height'),
 				degree,
 				radian,
 				radius,
@@ -102,11 +111,11 @@ define([
 				var getRadius= function(w, h){
 						return Math.sqrt(Math.pow(w/2, 2)+Math.pow(h/2, 2));
 					};
-				return getRadius(viewportWidth, viewportHeight)+getRadius(imageSize.width, imageSize.height);
+				return getRadius(tableWidth, tableHeight)+getRadius(size.width, size.height);
 			})();
 			
-			x= viewportWidth/2+radius*Math.cos(radian);
-			y= viewportHeight/2+radius*Math.sin(radian);
+			x= tableWidth/2+radius*Math.cos(radian);
+			y= tableHeight/2+radius*Math.sin(radian);
 /*
 			x= place.left+radius*Math.cos(radian);
 			y= place.top+radius*Math.sin(radian);			
@@ -119,6 +128,20 @@ define([
 				.css({
 					webkitTransform: 'translate3d('+x+'px, '+y+'px, 0) rotate('+rotate+'deg)',
 					webkitTransitionDuration: 0
+				});
+		},
+		show: function(){
+
+			var place= this.place;
+
+			this.$el
+				.wait(100)
+				.queue(function(next){
+					$(this).css({
+						webkitTransform: 'translate3d('+place.left+'px, '+place.top+'px, 0) rotate('+place.rotate+'deg)',
+						webkitTransitionDuration: '1.5s'
+					});
+					next();
 				});
 		}
 	});
