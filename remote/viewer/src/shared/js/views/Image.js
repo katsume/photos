@@ -72,7 +72,7 @@ define([
 			
 			var width= model.get('width')*ratio,
 				height= model.get('height')*ratio;
-
+				
 			this.$el.find('.image-body')
 				.css({
 					width: width+'px',

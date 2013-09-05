@@ -27,6 +27,10 @@ body {
 	background-color: black;
 }
 
+body.debug {
+	background-color: #0ff;
+}
+
 /*
  *	
  */

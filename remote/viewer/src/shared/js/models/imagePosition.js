@@ -1,23 +1,37 @@
 define([
+	'config',
 	'./table',
 	'./album',
 	'backbone'
 ], function(
+	config,
 	table,
 	album,
 	Backbone){
 
-	return new (Backbone.Collection.extend({
+	return new (Backbone.Model.extend({
+		GAMMA: 0.25,
+		LUT_LENGTH: 100,
 		initialize: function(){
 		
+			this.lut= [];
 			this.areaRatios= [];
 		
 			this.listenTo(table, 'change', this.setAreaRatios);
 			this.listenTo(album, 'change', this.setAreaRatios);
 			
+			this.createLut();
 			this.setAreaRatios();
 			
-			this.random();
+		},
+		createLut: function(){
+			
+			_.times(this.LUT_LENGTH, function(n){
+				
+				var dst= Math.pow(n/this.LUT_LENGTH, 1.0/this.GAMMA)
+				this.lut.push(dst);
+				
+			}, this);
 		},
 		getAreas: function(){
 			
@@ -67,17 +81,19 @@ define([
 			return targetIndex;
 		},
 		random: function(){
+		
+			var margin= config.image.size.width/4;
 			
 			var targetIndex= this.getTargetIndex();
 
-			var rx= Math.random(),
-				ry= Math.random();
+			var rx= Math.random();
+				ry= this.lut[Math.floor(Math.random()*this.LUT_LENGTH)];
 
-			var tableWidth= table.get('width'),
-				tableHeight= table.get('height'),
-				albumWidth= album.get('width'),
-				albumHeight= album.get('height'),
-				albumTop= album.get('top'),
+			var tableWidth= table.get('width')-margin*2,
+				tableHeight= table.get('height')-margin*2,
+				albumWidth= album.get('width')+margin*2,
+				albumHeight= album.get('height')+margin*2,
+				albumTop= album.get('top')-margin*2,
 				albumLeft= albumRight= (tableWidth-albumWidth)/2,
 				albumBottom= tableHeight-albumTop-albumHeight;
 				
@@ -120,8 +136,8 @@ define([
 			}
 			
 			return {
-				left: x,
-				top: y
+				left: x+margin,
+				top: y+margin
 			};
 		}
 	}))();

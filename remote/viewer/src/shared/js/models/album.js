@@ -5,7 +5,7 @@ define([
 
 	return new (Backbone.Model.extend({
 		defaults: {
-			top: 200,
+			top: 300,
 			width: 600,
 			height: 300
 		},

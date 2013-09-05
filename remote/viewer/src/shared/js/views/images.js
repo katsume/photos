@@ -33,7 +33,7 @@ define([
 			_.each(collection.models, function(model, i){
 				setTimeout(function(that){
 					that.append(model, collection);
-				}, 33*i, this)
+				}, 50*i, this)
 			}, this);
 		}
 	}))();
