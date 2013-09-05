@@ -1,7 +1,7 @@
 define({
-	host: '219.94.250.49',
-	port: 8080,
 	image: {
+		host: '219.94.250.49',
+		port: 8080,
 		size: {
 			width: 120,
 			height: 120
@@ -11,14 +11,16 @@ define({
 	table: {
 		position: {
 			left: 10,
-			top: 0
+			top: 2
 		},
 		size: {
 			width: 1260,
-			height: 675
+			height: 673
 		}
 	},
 	album: {
+		host: 'localhost',
+		port: 8080,
 		size: {
 			width: 640,
 			height: 420

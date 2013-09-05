@@ -86,7 +86,6 @@ var viewer= io
 	.on("connection", function(socket){
 	
 		socket.on('page', function(data){
-			console.log(data.page);
 			
 			db.update(data, function(err){
 				if(err){

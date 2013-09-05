@@ -1,19 +1,31 @@
 define([
+	'config',
 	'socket.io',
 	'backbone'
 ], function(
+	config,
 	io,
 	Backbone){
 
 	return new (Backbone.Model.extend({
+		NUM_OF_PAGES: 10,
+		defaults: {
+			page: -1
+		},
 		initialize: function(){
 		
-			this.on('change:page', function(model, value){
-				console.log("change : "+value);
-			});
-
-			_.bindAll(this, 'socketPageHandler');
-			this.socket= io.connect('//localhost:8080');
+			this.host= config.album.host;
+			this.port= config.album.port;
+		
+			_.bindAll(this,
+				'socketConnectingHandler',
+				'socketConnectHandler',
+				'socketConnectFailedHandler',
+				'socketPageHandler',
+				'socketRecconectHandler',
+				'socketDisconnectHandler'
+			);
+			this.socket= io.connect('//'+this.host+':'+this.port);
 			this.socket
 				.on('connecting', this.socketConnectingHandler)
 				.on('connect', this.socketConnectHandler)
@@ -23,30 +35,43 @@ define([
 				.on('disconnect', this.socketDisconnectHandler);
 		},
 		socketConnectingHandler: function(){
-			console.log('connecting');
+			console.log(this.host+':'+this.port+' : '+'connecting');
 		},
 		socketConnectHandler: function(){
-			console.log('connect');
+			console.log(this.host+':'+this.port+' : '+'connect');
 		},
 		socketConnectFailedHandler: function(){
-			console.log('connect_failed');
+			console.log(this.host+':'+this.port+' : '+'connect_failed');
 		},
 		socketPageHandler: function(data){
 
-			var page= Number(data.page);
+			var albumPage= Number(data.page);
 			
-			if(page===-1){
-				this.set('flipping', true);
+			if(albumPage===-1){
+				this.set('page', -1);
 			} else {
-				this.set('page', page);
-				this.set('flipping', false);
+			
+				var virtualPage= this.get('virtualPage');
+					
+				if(albumPage!==this.get('previousAlbumPage')){
+					
+					if(virtualPage<this.NUM_OF_PAGES-1){
+						virtualPage++;
+					} else {
+						virtualPage= 0;
+					}
+
+					this.set('previousAlbumPage', albumPage);			
+					this.set('virtualPage', virtualPage);
+				}
+				this.set('page', this.get('virtualPage'));
 			}
 		},
 		socketRecconectHandler: function(){
-			console.log('reconnect');
+			console.log(this.host+':'+this.port+' : '+'reconnect');
 		},
 		socketDisconnectHandler: function(){
-			console.log('disconnect');
+			console.log(this.host+':'+this.port+' : '+'disconnect');
 		}
 	}))();
 

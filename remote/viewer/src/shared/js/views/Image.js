@@ -22,7 +22,7 @@ define([
 		render: function(){
 
 			var model= this.model,
-				path= '//'+config.host+model.get('name');
+				path= '//'+config.image.host+model.get('name');
 			
 			var $el= $('<div/>');
 			
@@ -45,6 +45,10 @@ define([
 			this.setTargetPosition(isRandom);
 			this.adjustSize();
 			this.setInitialPosition();
+			this.show();
+		},
+		move: function(){
+			this.setTargetPosition(true);
 			this.show();
 		},
 		setTargetPosition: function(isRandom){

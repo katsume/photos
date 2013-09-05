@@ -2,25 +2,37 @@ define([
 	'config',
 	'socket.io',
 	'backbone',
-	'./image'
+	'./image',
+	'./page'
 ], function(
 	config,
 	io,
 	Backbone,
-	Image){
+	Image,
+	page){
 
 	return new (Backbone.Collection.extend({
 		model: Image,
 		limit: 100,
 		url: function(){
-			return '//'+config.host+':'+config.port+'/images?offset='+this.offset+'&limit='+this.limit;
+			return '//'+this.host+':'+this.port+'/images?offset='+this.offset+'&limit='+this.limit;
 		},
 		initialize: function(){
 		
 			this.offset= 0;
+			this.host= config.image.host;
+			this.port= config.image.port;
 
-			_.bindAll(this, 'socketPostHandler', 'socketTriggerHandler');
-			this.socket= io.connect(config.host+':'+config.port+'/viewer');
+			_.bindAll(this,
+				'socketConnectingHandler',
+				'socketConnectHandler',
+				'socketConnectFailedHandler',
+				'socketPostHandler',
+				'socketTriggerHandler',
+				'socketRecconectHandler',
+				'socketDisconnectHandler'
+			);
+			this.socket= io.connect(this.host+':'+this.port+'/viewer');
 			this.socket
 				.on('connecting', this.socketConnectingHandler)
 				.on('connect', this.socketConnectHandler)
@@ -36,28 +48,33 @@ define([
 			});
 		},
 		socketConnectingHandler: function(){
-			console.log('connecting');
+			console.log(this.host+':'+this.port+' : '+'connecting');
 		},
 		socketConnectHandler: function(){
-			console.log('connect');
+			console.log(this.host+':'+this.port+' : '+'connect');
 		},
 		socketConnectFailedHandler: function(){
-			console.log('connect_failed');
+			console.log(this.host+':'+this.port+' : '+'connect_failed');
 		},
 		socketPostHandler: function(data){
 			var model= new Image(data);		
 			this.add(model);
 		},
-		socketTriggerHandler: function(data){
+		socketTriggerHandler: function(data, callback){
 			var model= this.get(data.id);
+
+			data.page= page.get('page');
+
 			model.set(data);
 			model.trigger('trigger');
+			
+			this.socket.emit('page', data);
 		},
 		socketRecconectHandler: function(){
-			console.log('reconnect');
+			console.log(this.host+':'+this.port+' : '+'reconnect');
 		},
 		socketDisconnectHandler: function(){
-			console.log('disconnect');
+			console.log(this.host+':'+this.port+' : '+'disconnect');
 		}
 	}))();
 });

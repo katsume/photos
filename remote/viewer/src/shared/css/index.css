@@ -32,7 +32,7 @@ body.debug {
 }
 
 /*
- *	
+ *	table
  */
 
 #table {
@@ -48,7 +48,7 @@ body.debug #table {
 }
 
 /*
- *	
+ *	album	
  */
 
 #album {
@@ -60,7 +60,7 @@ body.debug #album {
 }
 
 /*
- *	
+ *	images
  */
 
 #images {
@@ -98,4 +98,13 @@ body.debug #album {
 	background-size: contain;
 	border-style: solid;
 	border-color: white;
+}
+
+/*
+ *	images
+ */
+
+#debug-page {
+	color: white;
+	font-size: 60px;
 }
