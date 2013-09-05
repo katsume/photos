@@ -1,12 +1,14 @@
 define([
 	'config',
 	'backbone',
-	'models/imagePosition',
+	'models/page',
+	'models/image/position',
 	'jquery-waitAnimation'
 ], function(
 	config,
 	Backbone,
-	imagePosition){
+	pageModel,
+	position){
 	
 	return Backbone.View.extend({
 		DEG_ADJUST: 0,
@@ -18,6 +20,7 @@ define([
 		
 			this.listenTo(this.model, 'trigger', this.trigger);
 			this.listenTo(this.model, 'remove', this.remove);
+			this.listenTo(pageModel, 'change:page', this.changePageHandler);
 		},
 		render: function(){
 
@@ -34,31 +37,43 @@ define([
 				
 			this.$el.append($el);
 			
-			if(model.has('heading')){
-				this.trigger(true);
-			}
-			
 			return this;
 		},
-		trigger: function(isRandom){
+		trigger: function(){
 		
-			this.setTargetPosition(isRandom);
-			this.adjustSize();
-			this.setInitialPosition();
-			this.show();
-		},
-		move: function(){
-			this.setTargetPosition(true);
-			this.show();
-		},
-		setTargetPosition: function(isRandom){
-		
-			this.place= imagePosition.random();
-			
-			if(isRandom){
-				this.place.rotate= Math.random()*360-180;
+			var model= this.model,
+				currentPage= pageModel.get('page'),
+				targetPage= model.get('page'),
+				initialPosition= position.getInitialPosition(model.get('heading')),
+				targetPosition;
+
+			if(currentPage===targetPage && currentPage!==-1){
+				targetPosition= position.getCurrentPosition();
 			} else {
-				this.place.rotate= 0;
+				targetPosition= position.getRandomPosition();
+			}
+			
+			this.action(initialPosition, 0, function(){
+			
+				this.adjustSize();
+				this.action(targetPosition, 1.5);
+
+			}, this);
+			
+		},
+		changePageHandler: function(model, currentPage){
+
+			var previousPage= model.previous('page'),
+				targetPage= this.model.get('page');
+
+			if(currentPage===-1){
+			
+				if(previousPage===targetPage){
+					this.action(position.getRandomPosition());
+				}
+			
+			} else if(currentPage===targetPage){
+				this.action(position.getCurrentPosition());
 			}
 		},
 		adjustSize: function(){
@@ -84,11 +99,7 @@ define([
 					borderWidth: borderWidth+'px'
 				});
 		},
-		setInitialPosition: function(){
-
-			var model= this.model,
-				heading= model.get('heading'),
-				place= this.place;
+		getInitialPosition: function(heading){
 
 			var	size= config.image.size,
 				tableWidth= config.table.size.width,
@@ -118,31 +129,35 @@ define([
 			
 			x= tableWidth/2+radius*Math.cos(radian);
 			y= tableHeight/2+radius*Math.sin(radian);
-/*
-			x= place.left+radius*Math.cos(radian);
-			y= place.top+radius*Math.sin(radian);			
-*/
 			
 			//	[-360, 0, 360]+(-180...+180)
 			rotate= (_.random(2)*360-1*360)+(Math.random()*360-180);
-
-			this.$el
-				.css({
-					webkitTransform: 'translate3d('+x+'px, '+y+'px, 0) rotate('+rotate+'deg)',
-					webkitTransitionDuration: 0
-				});
+			
+			return {
+				left: x,
+				top: y,
+				rotate: rotate
+			};
 		},
-		show: function(){
-
-			var place= this.place;
+		action: function(position, duration, callback, context){
+		
+			duration= typeof duration==='number' ? duration : 0.75;
+			context= context||this;
 
 			this.$el
-				.wait(100)
+				.wait()
 				.queue(function(next){
 					$(this).css({
-						webkitTransform: 'translate3d('+place.left+'px, '+place.top+'px, 0) rotate('+place.rotate+'deg)',
-						webkitTransitionDuration: '1.5s'
+						webkitTransform: 'translate3d('+position.left+'px, '+position.top+'px, 0) rotate('+position.rotate+'deg)',
+						webkitTransitionDuration: (duration||0.5)+'s'
 					});
+					next();
+				})
+				.waitTransition()
+				.queue(function(next){
+					if(typeof callback==='function'){
+						callback.apply(context);
+					}
 					next();
 				});
 		}

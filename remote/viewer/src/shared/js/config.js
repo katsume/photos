@@ -3,8 +3,8 @@ define({
 		host: '219.94.250.49',
 		port: 8080,
 		size: {
-			width: 120,
-			height: 120
+			width: 125,
+			height: 125
 		},
 		borderWidth: 3
 	},
@@ -24,6 +24,80 @@ define({
 		size: {
 			width: 640,
 			height: 420
-		}
+		},
+		positionTemplates: [
+			[
+				{
+					left: 460,
+					top: 280
+				},
+				{
+					left: 540,
+					top: 420
+				},
+				{
+					left: 710,
+					top: 280
+				},
+				{
+					left: 800,
+					top: 420
+				}
+			],
+			[
+				{
+					left: 460,
+					top: 280
+				},
+				{
+					left: 540,
+					top: 420
+				},
+				{
+					left: 710,
+					top: 420
+				},
+				{
+					left: 800,
+					top: 280
+				}
+			],
+			[
+				{
+					left: 460,
+					top: 420
+				},
+				{
+					left: 540,
+					top: 280
+				},
+				{
+					left: 710,
+					top: 280
+				},
+				{
+					left: 800,
+					top: 420
+				}
+			],
+			[
+				{
+					left: 460,
+					top: 280
+				},
+				{
+					left: 540,
+					top: 420
+				},
+				{
+					left: 710,
+					top: 280
+				},
+				{
+					left: 800,
+					top: 420
+				}
+			]
+		]
 	}
 });

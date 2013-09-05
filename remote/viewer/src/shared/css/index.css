@@ -105,6 +105,8 @@ body.debug #album {
  */
 
 #debug-page {
+	position: absolute;
+	z-index: 10;
 	color: white;
 	font-size: 60px;
 }

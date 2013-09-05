@@ -1,31 +1,47 @@
 define([
 	'config',
-	'backbone'
+	'backbone',
+	'../page'
 ], function(
 	config,
-	Backbone){
+	Backbone,
+	page){
 
 	return new (Backbone.Model.extend({
 		GAMMA: 0.25,
 		LUT_LENGTH: 100,
+		DEG_ADJUST: 0,
 		initialize: function(){
-		
-			this.lut= [];
-			this.areaRatios= [];
-			
-			this.createLut();
-			this.setAreaRatios();			
+			this.positions= this._createPositions();
+			this.lut= this._createLut();
+			this.areaRatios= this._createAreaRatios();			
 		},
-		createLut: function(){
+		_createPositions: function(){
+			
+			var positions= [],
+				templates= config.album.positionTemplates;
+				
+			_.times(page.NUM_OF_PAGES, function(){
+				var position= _.shuffle(templates).pop();
+				positions.push(position);
+			});
+			
+			return positions;
+		},
+		_createLut: function(){
+			
+			var lut= [];
 			
 			_.times(this.LUT_LENGTH, function(n){
 				
 				var dst= Math.pow(n/this.LUT_LENGTH, 1.0/this.GAMMA)
-				this.lut.push(dst);
+				lut.push(dst);
 				
 			}, this);
+			
+			return lut;
 		},
-		getAreas: function(){
+		_getAreas: function(){
 			
 			var getArea= function(bottom, top, height){
 				return (bottom+top)*height/2;
@@ -45,9 +61,9 @@ define([
 				getArea(tableHeight, albumHeight, albumLeft)
 			];
 		},
-		setAreaRatios: function(){
+		_createAreaRatios: function(){
 
-			var areas= this.getAreas();
+			var areas= this._getAreas();
 
 			var sumAreas= _.reduce(areas, function(memo, num){ return memo+num; });
 
@@ -55,10 +71,10 @@ define([
 			
 			var sum= 0;
 			
-			this.areaRatios= _.map(areaRatios, function(num){ sum+=num; return sum; });				
-
+			return _.map(areaRatios, function(num){ sum+=num; return sum; });
+			
 		},
-		getTargetIndex: function(){
+		_getTargetIndex: function(){
 			
 			var rand= Math.random(),
 				targetIndex= this.areaRatios.length-1;
@@ -71,11 +87,51 @@ define([
 
 			return targetIndex;
 		},
-		random: function(){
+		getInitialPosition: function(heading){
+
+			var	size= config.image.size,
+				tableWidth= config.table.size.width,
+				tableHeight= config.table.size.height,
+				degree,
+				radian,
+				radius,
+				x,
+				y,
+				rotate;
+
+			degree= heading;
+			degree-= this.DEG_ADJUST;
+			degree-= Math.floor(degree/360.0)*360.0;
+			if(180<degree){
+				degree-= 360;
+			}			
+
+			radian= (degree/180.0)*Math.PI;
+
+			radius= (function(){
+				var getRadius= function(w, h){
+						return Math.sqrt(Math.pow(w/2, 2)+Math.pow(h/2, 2));
+					};
+				return getRadius(tableWidth, tableHeight)+getRadius(size.width, size.height);
+			})();
+			
+			x= tableWidth/2+radius*Math.cos(radian);
+			y= tableHeight/2+radius*Math.sin(radian);
+			
+			//	[-360, 0, 360]+(-180...+180)
+			rotate= (_.random(2)*360-1*360)+(Math.random()*360-180);
+			
+			return {
+				left: x,
+				top: y,
+				rotate: rotate
+			};
+		},
+		getRandomPosition: function(){
 		
 			var margin= config.image.size.width/4;
 			
-			var targetIndex= this.getTargetIndex();
+			var targetIndex= this._getTargetIndex();
 
 			var rx= Math.random();
 				ry= this.lut[Math.floor(Math.random()*this.LUT_LENGTH)];
@@ -138,7 +194,19 @@ define([
 			
 			return {
 				left: x+margin,
-				top: y+margin
+				top: y+margin,
+				rotate: Math.random()*360-180
+			};
+		},
+		getCurrentPosition: function(){
+
+			var positions= this.positions[page.get('page')];
+			var position= positions[page.getIndex()];
+
+			return {
+				left: position.left,
+				top: position.top,
+				rotate: Math.random()*10-5
 			};
 		}
 	}))();

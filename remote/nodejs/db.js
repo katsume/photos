@@ -84,9 +84,12 @@ exports.create= function(data, callback){
 
 exports.update= function(data, callback){
 	
+	var heading= data.heading,
+		page= typeof data.page==='number' ? data.page : -1;
+	
 	var image= Image.findByIdAndUpdate(data.id, {
-		heading: data.heading,
-		page: data.page||-1
+		heading: heading,
+		page: page
 	}, function(err){
 		callback(err);
 	});

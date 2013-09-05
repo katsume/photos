@@ -9,41 +9,54 @@ define([
 
 	return new (Backbone.Model.extend({
 		NUM_OF_PAGES: 10,
+		NUM_OF_IMAGES: 4,
 		defaults: {
-			page: -1
+			virtualPage: 0,
+			page: 0
 		},
 		initialize: function(){
-		
+				
 			this.host= config.album.host;
 			this.port= config.album.port;
+			this.indexes= this._createIndexes();
 		
 			_.bindAll(this,
-				'socketConnectingHandler',
-				'socketConnectHandler',
-				'socketConnectFailedHandler',
-				'socketPageHandler',
-				'socketRecconectHandler',
-				'socketDisconnectHandler'
+				'_socketConnectingHandler',
+				'_socketConnectHandler',
+				'_socketConnectFailedHandler',
+				'_socketPageHandler',
+				'_socketRecconectHandler',
+				'_socketDisconnectHandler'
 			);
 			this.socket= io.connect('//'+this.host+':'+this.port);
 			this.socket
-				.on('connecting', this.socketConnectingHandler)
-				.on('connect', this.socketConnectHandler)
-				.on('connect_failed', this.socketConnectFailedHandler)
-				.on('page', this.socketPageHandler)
-				.on('reconnect', this.socketRecconectHandler)
-				.on('disconnect', this.socketDisconnectHandler);
+				.on('connecting', this._socketConnectingHandler)
+				.on('connect', this._socketConnectHandler)
+				.on('connect_failed', this._socketConnectFailedHandler)
+				.on('page', this._socketPageHandler)
+				.on('reconnect', this._socketRecconectHandler)
+				.on('disconnect', this._socketDisconnectHandler);
 		},
-		socketConnectingHandler: function(){
+		_createIndexes: function(){
+			
+			var indexes= [];
+
+			_.times(this.NUM_OF_PAGES, function(){
+				indexes.push(0);
+			});
+			
+			return indexes;
+		},
+		_socketConnectingHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'connecting');
 		},
-		socketConnectHandler: function(){
+		_socketConnectHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'connect');
 		},
-		socketConnectFailedHandler: function(){
+		_socketConnectFailedHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'connect_failed');
 		},
-		socketPageHandler: function(data){
+		_socketPageHandler: function(data){
 
 			var albumPage= Number(data.page);
 			
@@ -67,11 +80,26 @@ define([
 				this.set('page', this.get('virtualPage'));
 			}
 		},
-		socketRecconectHandler: function(){
+		_socketRecconectHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'reconnect');
 		},
-		socketDisconnectHandler: function(){
+		_socketDisconnectHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'disconnect');
+		},
+		getIndex: function(){
+		
+			var currentPage= this.get('page'),
+				currentIndex= this.indexes[currentPage];
+				
+			if(currentIndex<this.NUM_OF_IMAGES-1){
+				currentIndex++;
+			} else {
+				currentIndex= 0;
+			}
+			
+			this.indexes[currentPage]= currentIndex;
+		
+			return currentIndex;
 		}
 	}))();
 

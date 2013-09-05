@@ -20,9 +20,10 @@ define([
 			this.views= [];
 		
 			this.listenTo(collection, 'add', this.append);
-			this.listenTo(collection, 'reset', this.replace);
-			
+			this.listenTo(collection, 'reset', this.replace);			
 			this.listenTo(page, 'change:page', this.changePageHandler);
+
+			this.changePageHandler(page, page.get('page'));
 		},
 		append: function(model, collection, options){
 		
@@ -32,6 +33,10 @@ define([
 			this.views.push(view);
 			
 			$(this.el).append(view.render().el);
+
+			if(model.has('heading')){
+				view.trigger();
+			}			
 		},
 		replace: function(collection){
 			
@@ -43,18 +48,10 @@ define([
 			_.each(collection.models, function(model, i){
 				setTimeout(function(that){
 					that.append(model, collection);
-				}, 50*i, this);
+				}, 16*i, this);
 			}, this);
 		},
 		changePageHandler: function(model, page){
-		
-			if(page===-1){
-				_.each(this.views, function(view){
-					view.move();
-				}, this);
-				return;
-			}
-
 			$("#debug-page").text(page);			
 		}
 	}))();
