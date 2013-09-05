@@ -84,4 +84,13 @@ var client= io
 var viewer= io
 	.of("/viewer")
 	.on("connection", function(socket){
+	
+		socket.on('page', function(data){
+			console.log(data.page);
+			
+			db.update(data, function(err){
+				if(err){
+				}
+			});
+		});
 	});

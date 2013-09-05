@@ -10,7 +10,8 @@ var ImageSchema= new mongoose.Schema({
 	width: Number,
 	height: Number,
 	name: String,
-	heading: Number
+	heading: Number,
+	page: Number
 });
 
 mongoose.model('Image', ImageSchema);
@@ -84,11 +85,11 @@ exports.create= function(data, callback){
 exports.update= function(data, callback){
 	
 	var image= Image.findByIdAndUpdate(data.id, {
-		heading: data.heading
+		heading: data.heading,
+		page: data.page||-1
 	}, function(err){
 		callback(err);
 	});
-	
 };
 
 exports.destroy= function(req, res){
