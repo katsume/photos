@@ -7,5 +7,21 @@ define({
 			height: 120
 		},
 		borderWidth: 3
+	},
+	table: {
+		position: {
+			left: 10,
+			top: 0
+		},
+		size: {
+			width: 1260,
+			height: 675
+		}
+	},
+	album: {
+		size: {
+			width: 640,
+			height: 420
+		}
 	}
 });

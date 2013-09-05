@@ -49,7 +49,6 @@ define([
 			this.add(model);
 		},
 		socketTriggerHandler: function(data){
-		console.log(data.heading);
 			var model= this.get(data.id);
 			model.set(data);
 			model.trigger('trigger');

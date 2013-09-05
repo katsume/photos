@@ -11,14 +11,16 @@ io.set('log level', 1);
 
 app.get('/', function(req, res){
 
-	console.log(req.query.page);
+//	console.log(req.query.page);
 
 	if(!req.query.page){
 		res.send(404);
 		return;
 	}
 
-	io.sockets.emit('page', req.query.page);
+	io.sockets.emit('page', {
+		page: req.query.page
+	});
 	res.send(200);
 
 });

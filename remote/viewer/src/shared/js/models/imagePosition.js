@@ -1,12 +1,8 @@
 define([
 	'config',
-	'./table',
-	'./album',
 	'backbone'
 ], function(
 	config,
-	table,
-	album,
 	Backbone){
 
 	return new (Backbone.Model.extend({
@@ -16,13 +12,9 @@ define([
 		
 			this.lut= [];
 			this.areaRatios= [];
-		
-			this.listenTo(table, 'change', this.setAreaRatios);
-			this.listenTo(album, 'change', this.setAreaRatios);
 			
 			this.createLut();
-			this.setAreaRatios();
-			
+			this.setAreaRatios();			
 		},
 		createLut: function(){
 			
@@ -39,13 +31,12 @@ define([
 				return (bottom+top)*height/2;
 			};
 			
-			var tableWidth= table.get('width'),
-				tableHeight= table.get('height'),
-				albumWidth= album.get('width'),
-				albumHeight= album.get('height'),
-				albumTop= album.get('top'),
+			var tableWidth= config.table.size.width,
+				tableHeight= config.table.size.height,
+				albumWidth= config.album.size.width,
+				albumHeight= config.album.size.height,
 				albumLeft= albumRight= (tableWidth-albumWidth)/2,
-				albumBottom= tableHeight-albumTop-albumHeight;
+				albumTop= albumBottom= (tableHeight-albumHeight)/2;
 		
 			return [
 				getArea(tableWidth, albumWidth, albumTop),
@@ -89,6 +80,15 @@ define([
 			var rx= Math.random();
 				ry= this.lut[Math.floor(Math.random()*this.LUT_LENGTH)];
 
+			var tableWidth= config.table.size.width-margin*2,
+				tableHeight= config.table.size.height-margin*2,
+				albumWidth= config.album.size.width,
+				albumHeight= config.album.size.height,
+				albumLeft= albumRight= (tableWidth-albumWidth)/2,
+				albumTop= (tableHeight-albumHeight)/2,
+				albumBottom= (tableHeight-albumHeight)/2;
+
+/*
 			var tableWidth= table.get('width')-margin*2,
 				tableHeight= table.get('height')-margin*2,
 				albumWidth= album.get('width')+margin*2,
@@ -96,6 +96,7 @@ define([
 				albumTop= album.get('top')-margin*2,
 				albumLeft= albumRight= (tableWidth-albumWidth)/2,
 				albumBottom= tableHeight-albumTop-albumHeight;
+*/
 				
 			var tmpWidth,
 				tmpHeight;

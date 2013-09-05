@@ -41,7 +41,8 @@ require([
 		require([
 			'views/table',
 			'views/album',
-			'views/images'
+			'views/images',
+			'models/page'
 		], function(){
 			
 		});

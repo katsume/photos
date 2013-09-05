@@ -1,13 +1,11 @@
 define([
 	'config',
 	'backbone',
-	'models/table',
 	'models/imagePosition',
 	'jquery-waitAnimation'
 ], function(
 	config,
 	Backbone,
-	table,
 	imagePosition){
 	
 	return Backbone.View.extend({
@@ -89,8 +87,8 @@ define([
 				place= this.place;
 
 			var	size= config.image.size,
-				tableWidth= table.get('width'),
-				tableHeight= table.get('height'),
+				tableWidth= config.table.size.width,
+				tableHeight= config.table.size.height,
 				degree,
 				radian,
 				radius,

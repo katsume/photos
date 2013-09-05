@@ -37,8 +37,10 @@ body.debug {
 
 #table {
 	position: absolute;	
-	background-color: black;
+
 	overflow: hidden;
+
+	background-color: black;
 }
 
 body.debug #table {
@@ -51,7 +53,6 @@ body.debug #table {
 
 #album {
 	position: absolute;
-	left: 50%;
 }
 
 body.debug #album {
