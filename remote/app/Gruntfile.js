@@ -50,7 +50,7 @@ module.exports = function(grunt) {
 			app: {
 				options: {
 					src: "./dist/",
-					dest: "/var/www/p.katsu.me/htdocs"
+					dest: "/var/www/immi.katsu.me/htdocs"
 				}
 			}
 		}
