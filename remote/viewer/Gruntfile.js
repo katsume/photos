@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 			viewer: {
 				options: {
 					src: "./dist/",
-					dest: "/var/www/p.katsu.me/htdocs/viewer"
+					dest: "/var/www/immi.katsu.me/htdocs/viewer"
 				}
 			}
 		}

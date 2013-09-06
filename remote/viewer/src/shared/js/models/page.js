@@ -8,7 +8,7 @@ define([
 	Backbone){
 
 	return new (Backbone.Model.extend({
-		NUM_OF_PAGES: 10,
+		NUM_OF_PAGES: 5,
 		NUM_OF_IMAGES: 4,
 		defaults: {
 			virtualPage: 0,
@@ -106,7 +106,7 @@ define([
 		_socketDisconnectHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'disconnect');
 		},
-		getIndex: function(model){
+		getIndex: function(model, force){
 		
 			var currentPage= this.get('page'),
 				currentIndex= this.indexes[currentPage],
@@ -122,7 +122,7 @@ define([
 			
 			//	id
 			oldId= this.ids[currentPage][currentIndex];
-			if(oldId){
+			if(oldId && force){
 				this.trigger('out', oldId);
 			}
 			this.ids[currentPage][currentIndex]= model.id;

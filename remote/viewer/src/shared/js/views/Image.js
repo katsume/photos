@@ -57,7 +57,7 @@ define([
 						duration= 0.75;
 					}
 
-					targetPosition= position.getCurrentPosition(model);
+					targetPosition= position.getCurrentPosition(model, force);
 				} else {
 					targetPosition= position.getRandomPosition();
 				}
@@ -90,7 +90,7 @@ define([
 			}
 		},
 		_changePageHandler: function(pageModel, currentPage){
-			
+
 			var model= this.model,
 				previousPage= pageModel.previous('page'),
 				targetPage= model.get('page');

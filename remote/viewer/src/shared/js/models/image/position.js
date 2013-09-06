@@ -214,10 +214,10 @@ define([
 			
 			return _.contains(models, model);
 		},
-		getCurrentPosition: function(model){
+		getCurrentPosition: function(model, force){
 
 			var positions= this.positions[page.get('page')],
-				index= page.getIndex(model);
+				index= page.getIndex(model, force);
 				
 			var position= positions[index];
 			
