@@ -88,8 +88,7 @@ body.debug #album {
 	overflow: visible;
 
 	-webkit-transition-property: -webkit-transform;
-	-webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);	
-	
+/* 	-webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); */
 }
 
 .image-body {
@@ -101,12 +100,17 @@ body.debug #album {
 }
 
 /*
- *	images
+ *
  */
 
-#debug-page {
+#log {
+	display: none;
 	position: absolute;
 	z-index: 10;
 	color: white;
 	font-size: 60px;
+}
+
+body.debug #log {
+	display: block;
 }

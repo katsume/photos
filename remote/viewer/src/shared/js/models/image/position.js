@@ -1,10 +1,12 @@
 define([
 	'config',
 	'backbone',
+	'../images',
 	'../page'
 ], function(
 	config,
 	Backbone,
+	collection,
 	page){
 
 	return new (Backbone.Model.extend({
@@ -124,6 +126,7 @@ define([
 			return {
 				left: x,
 				top: y,
+				skew: 0,
 				rotate: rotate
 			};
 		},
@@ -195,17 +198,35 @@ define([
 			return {
 				left: x+margin,
 				top: y+margin,
+				skew: 0,
 				rotate: Math.random()*360-180
 			};
 		},
-		getCurrentPosition: function(){
+		canEnterCurrentPosition: function(model){
+		
+			var currentPage= page.get('page');
 
-			var positions= this.positions[page.get('page')];
-			var position= positions[page.getIndex()];
+			var models= collection.filter(function(model){
+				return model.get('page')===currentPage;
+			});
+						
+			models= _.first(models, page.NUM_OF_IMAGES);
+			
+			return _.contains(models, model);
+		},
+		getCurrentPosition: function(model){
+
+			var positions= this.positions[page.get('page')],
+				index= page.getIndex(model);
+				
+			var position= positions[index];
+			
+			var skews= [2, 4, -4, -2];
 
 			return {
 				left: position.left,
 				top: position.top,
+				skew: skews[index],
 				rotate: Math.random()*10-5
 			};
 		}

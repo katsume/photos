@@ -4,6 +4,7 @@ define([
 	Backbone){
 
 	return Backbone.Model.extend({
+		idAttribute: '_id'
 	});
 
 });

@@ -18,7 +18,9 @@ define([
 				
 			this.host= config.album.host;
 			this.port= config.album.port;
+			
 			this.indexes= this._createIndexes();
+			this.ids= this._createIds();
 		
 			_.bindAll(this,
 				'_socketConnectingHandler',
@@ -47,6 +49,20 @@ define([
 			
 			return indexes;
 		},
+		_createIds: function(){
+			
+			var ids= [];
+			
+			_.times(this.NUM_OF_PAGES, function(){
+				var page= [];
+				_.times(this.NUM_OF_IMAGES, function(){
+					page.push(null);
+				});
+				ids.push(page);
+			}, this);
+
+			return ids;
+		},
 		_socketConnectingHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'connecting');
 		},
@@ -61,7 +77,11 @@ define([
 			var albumPage= Number(data.page);
 			
 			if(albumPage===-1){
-				this.set('page', -1);
+
+				setTimeout(function(that){
+					that.set('page', -1);
+				}, 500, this);
+
 			} else {
 			
 				var virtualPage= this.get('virtualPage');
@@ -86,19 +106,27 @@ define([
 		_socketDisconnectHandler: function(){
 			console.log(this.host+':'+this.port+' : '+'disconnect');
 		},
-		getIndex: function(){
+		getIndex: function(model){
 		
 			var currentPage= this.get('page'),
-				currentIndex= this.indexes[currentPage];
-				
+				currentIndex= this.indexes[currentPage],
+				oldId;				
+
+			//	index	
+			
 			if(currentIndex<this.NUM_OF_IMAGES-1){
-				currentIndex++;
+				this.indexes[currentPage]= currentIndex+1;
 			} else {
-				currentIndex= 0;
+				this.indexes[currentPage]= 0;
 			}
 			
-			this.indexes[currentPage]= currentIndex;
-		
+			//	id
+			oldId= this.ids[currentPage][currentIndex];
+			if(oldId){
+				this.trigger('out', oldId);
+			}
+			this.ids[currentPage][currentIndex]= model.id;
+
 			return currentIndex;
 		}
 	}))();

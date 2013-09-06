@@ -52,7 +52,7 @@ define([
 			}, this);
 		},
 		changePageHandler: function(model, page){
-			$("#debug-page").text(page);			
+			$("#log").text(page);			
 		}
 	}))();
 		

@@ -16,11 +16,10 @@ define([
 		className: 'image',
 		initialize: function(){
 		
-			this.place= null;
-		
 			this.listenTo(this.model, 'trigger', this.trigger);
 			this.listenTo(this.model, 'remove', this.remove);
-			this.listenTo(pageModel, 'change:page', this.changePageHandler);
+			this.listenTo(this.model, 'out', this._out);
+			this.listenTo(pageModel, 'change:page', this._changePageHandler);
 		},
 		render: function(){
 
@@ -39,44 +38,85 @@ define([
 			
 			return this;
 		},
-		trigger: function(){
+		trigger: function(force){
 		
 			var model= this.model,
 				currentPage= pageModel.get('page'),
 				targetPage= model.get('page'),
 				initialPosition= position.getInitialPosition(model.get('heading')),
+				easing= '',
+				duration= 1.5,
 				targetPosition;
-
+				
 			if(currentPage===targetPage && currentPage!==-1){
-				targetPosition= position.getCurrentPosition();
+
+				if(force||position.canEnterCurrentPosition(model)){
+					
+					if(force){
+						easing= 'cubic-bezier(0.390, 0.575, 0.565, 1.000)';
+						duration= 0.75;
+					}
+
+					targetPosition= position.getCurrentPosition(model);
+				} else {
+					targetPosition= position.getRandomPosition();
+				}
+
 			} else {
 				targetPosition= position.getRandomPosition();
 			}
-			
-			this.action(initialPosition, 0, function(){
-			
-				this.adjustSize();
-				this.action(targetPosition, 1.5);
 
-			}, this);
+			this._action({
+				position: initialPosition,
+				duration: 0,
+				callback: function(){
+					this._adjustSize();
+					this._action({
+						position: targetPosition,
+						duration: duration,
+						easing: easing,
+					});
+				},
+				context: this
+			});
 			
 		},
-		changePageHandler: function(model, currentPage){
-
-			var previousPage= model.previous('page'),
-				targetPage= this.model.get('page');
+		_out: function(id){
+			if(this.model.id===id || this.model.get('page')!==pageModel.get('page')){
+				this._action({
+					position: position.getRandomPosition(),
+					duration: 1.5
+				});
+			}
+		},
+		_changePageHandler: function(pageModel, currentPage){
+			
+			var model= this.model,
+				previousPage= pageModel.previous('page'),
+				targetPage= model.get('page');
 
 			if(currentPage===-1){
 			
 				if(previousPage===targetPage){
-					this.action(position.getRandomPosition());
+					this._action({
+						position: position.getRandomPosition()
+					});
 				}
 			
 			} else if(currentPage===targetPage){
-				this.action(position.getCurrentPosition());
+
+				if(position.canEnterCurrentPosition(model)){
+					this._action({
+						position: position.getCurrentPosition(model)
+					});
+				} else {
+					this._action({
+						position: position.getRandomPosition()
+					});
+				}
 			}
 		},
-		adjustSize: function(){
+		_adjustSize: function(){
 		
 			var model= this.model,
 				size= config.image.size,
@@ -99,58 +139,32 @@ define([
 					borderWidth: borderWidth+'px'
 				});
 		},
-		getInitialPosition: function(heading){
+		_action: function(opt){
 
-			var	size= config.image.size,
-				tableWidth= config.table.size.width,
-				tableHeight= config.table.size.height,
-				degree,
-				radian,
-				radius,
-				x,
-				y,
-				rotate;
-
-			degree= heading;
-			degree-= this.DEG_ADJUST;
-			degree-= Math.floor(degree/360.0)*360.0;
-			if(180<degree){
-				degree-= 360;
-			}			
-
-			radian= (degree/180.0)*Math.PI;
-
-			radius= (function(){
-				var getRadius= function(w, h){
-						return Math.sqrt(Math.pow(w/2, 2)+Math.pow(h/2, 2));
-					};
-				return getRadius(tableWidth, tableHeight)+getRadius(size.width, size.height);
-			})();
-			
-			x= tableWidth/2+radius*Math.cos(radian);
-			y= tableHeight/2+radius*Math.sin(radian);
-			
-			//	[-360, 0, 360]+(-180...+180)
-			rotate= (_.random(2)*360-1*360)+(Math.random()*360-180);
-			
-			return {
-				left: x,
-				top: y,
-				rotate: rotate
+			var position= opt.position,
+				duration= typeof opt.duration==='number' ? opt.duration : 0.75,
+				easing= opt.easing||'cubic-bezier(0.215, 0.610, 0.355, 1.000)',/* ease-out-cubic */
+				callback= opt.callback,
+				context= opt.context||this;
+				
+			var css= {
+				webkitTransform: 'translate3d('+position.left+'px, '+position.top+'px, 0) rotate('+position.rotate+'deg) skewY('+position.skew+'deg)',
+				webkitTransitionDuration: duration+'s',
+				webkitTransitionTimingFunction: easing
 			};
-		},
-		action: function(position, duration, callback, context){
-		
-			duration= typeof duration==='number' ? duration : 0.75;
-			context= context||this;
+
+			if(duration<=0){
+				this.$el.css(css);
+				if(typeof callback==='function'){
+					callback.apply(context);
+				}
+				return;
+			}
 
 			this.$el
 				.wait()
 				.queue(function(next){
-					$(this).css({
-						webkitTransform: 'translate3d('+position.left+'px, '+position.top+'px, 0) rotate('+position.rotate+'deg)',
-						webkitTransitionDuration: (duration||0.5)+'s'
-					});
+					$(this).css(css);
 					next();
 				})
 				.waitTransition()

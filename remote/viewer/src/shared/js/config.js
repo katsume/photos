@@ -23,7 +23,7 @@ define({
 		port: 8080,
 		size: {
 			width: 640,
-			height: 420
+			height: 410
 		},
 		positionTemplates: [
 			[
@@ -33,7 +33,7 @@ define({
 				},
 				{
 					left: 540,
-					top: 420
+					top: 410
 				},
 				{
 					left: 710,
@@ -41,7 +41,7 @@ define({
 				},
 				{
 					left: 800,
-					top: 420
+					top: 410
 				}
 			],
 			[
@@ -51,11 +51,11 @@ define({
 				},
 				{
 					left: 540,
-					top: 420
+					top: 410
 				},
 				{
 					left: 710,
-					top: 420
+					top: 410
 				},
 				{
 					left: 800,
@@ -65,7 +65,7 @@ define({
 			[
 				{
 					left: 460,
-					top: 420
+					top: 410
 				},
 				{
 					left: 540,
@@ -77,7 +77,7 @@ define({
 				},
 				{
 					left: 800,
-					top: 420
+					top: 410
 				}
 			],
 			[
@@ -87,7 +87,7 @@ define({
 				},
 				{
 					left: 540,
-					top: 420
+					top: 410
 				},
 				{
 					left: 710,
@@ -95,7 +95,7 @@ define({
 				},
 				{
 					left: 800,
-					top: 420
+					top: 410
 				}
 			]
 		]
