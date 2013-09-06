@@ -50,7 +50,7 @@ var client= io
 	
 		socket.on("post", function(data, callback){
 		
-			db.create(data, function(err, id, name){
+			db.create(data, function(err, _id, name){
 			
 				if(err){
 					callback();
@@ -58,13 +58,13 @@ var client= io
 				}
 				
 				viewer.emit("post", {
-					id: id,
+					_id: _id,
 					name: name,
 					width: data.width,
 					height: data.height
 				});
 
-				callback(id);
+				callback(_id);
 			});
 			
 		});
