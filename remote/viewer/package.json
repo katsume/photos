@@ -1,7 +1,0 @@
-{
-	"devDependencies": {
-		"grunt": "*",
-		"grunt-contrib-requirejs": "*",
-		"grunt-rsync": "*"
-	}
-}
